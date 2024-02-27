@@ -1,0 +1,6 @@
+name: Minecraft_SPY_RUMBLE
+version: '${project.version}'
+main: net.cherryleaves.minecraft_spy_rumble.Minecraft_SPY_RUMBLE
+api-version: '1.20'
+author: sakuraba_jp
+description: このゲームは【Spy Rumble】というゲームをモチーフにし、制作陣がこるんの名のもと勝手にMinecraft化したゲームのシステムプラグインである。
