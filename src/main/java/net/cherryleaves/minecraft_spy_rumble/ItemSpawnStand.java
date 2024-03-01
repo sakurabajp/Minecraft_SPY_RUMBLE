@@ -55,12 +55,14 @@ public class ItemSpawnStand implements Listener {
             }
         }
         if (event.getAction() == Action.RIGHT_CLICK_AIR) {
-            ItemStack ResetItem = new ItemStack(Material.ARMOR_STAND);
-            ItemMeta ResetItemMeta = ResetItem.getItemMeta();
-            Objects.requireNonNull(ResetItemMeta).setDisplayName(ChatColor.AQUA + "出現場所を全てリセットする");
-            ResetItem.setItemMeta(ResetItemMeta);
-            RGUI.setItem(4, ResetItem);
-            event.getPlayer().openInventory(RGUI);
+            if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.GOLDEN_PICKAXE && Objects.requireNonNull(event.getPlayer().getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.GOLD + "金のスポーン場所をセットする")) {
+                ItemStack ResetItem = new ItemStack(Material.ARMOR_STAND);
+                ItemMeta ResetItemMeta = ResetItem.getItemMeta();
+                Objects.requireNonNull(ResetItemMeta).setDisplayName(ChatColor.AQUA + "出現場所を全てリセットする");
+                ResetItem.setItemMeta(ResetItemMeta);
+                RGUI.setItem(4, ResetItem);
+                event.getPlayer().openInventory(RGUI);
+            }
         }
     }
 
