@@ -7,9 +7,7 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -70,12 +68,14 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent Player) {
+        Player.getPlayer().getInventory().clear();
         if (Player.getPlayer().isOp()) {
             ItemStack OperateBook = new ItemStack(Material.BOOK);
             ItemMeta OperateBookMeta = OperateBook.getItemMeta(); // metaを登録
             Objects.requireNonNull(OperateBookMeta).setDisplayName(ChatColor.BOLD + "設定本");
             OperateBook.setItemMeta(OperateBookMeta);
             Player.getPlayer().getInventory().addItem(OperateBook);
+            new ItemSpawnStand().getItem(Player.getPlayer());
         }
     }
 
@@ -138,6 +138,12 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         Objects.requireNonNull(TaskCountUpItemMeta).setDisplayName(ChatColor.RED + "同時に出現するタスクの数を増やす");
         TaskCountUpItem.setItemMeta(TaskCountUpItemMeta);
         SettingGUI.setItem(6, TaskCountUpItem);
+        // ゲームスタートボタン
+        ItemStack GameStartItem = new ItemStack(Material.TOTEM_OF_UNDYING);
+        ItemMeta GameStartItemMeta = GameStartItem.getItemMeta();
+        Objects.requireNonNull(GameStartItemMeta).setDisplayName(ChatColor.BLUE + "ゲームスタート！");
+        GameStartItem.setItemMeta(GameStartItemMeta);
+        SettingGUI.setItem(8, GameStartItem);
     }
 
     @EventHandler
@@ -184,6 +190,10 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                         player.sendMessage(ChatColor.RED + "同時に出現するタスクの数を0未満にすることはできません");
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 1.0f, 0.01f);
                     }
+                }
+                if (clickedItem != null && clickedItem.getType().equals(Material.TOTEM_OF_UNDYING)) {
+                    player.closeInventory();
+                    new Game().Start();
                 }
                 event.setCancelled(true);
             }
