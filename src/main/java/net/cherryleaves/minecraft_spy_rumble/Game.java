@@ -1,9 +1,8 @@
 package net.cherryleaves.minecraft_spy_rumble;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -16,8 +15,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import static net.cherryleaves.minecraft_spy_rumble.Minecraft_SPY_RUMBLE.ParallelTaskCount;
+
 public class Game {
-    public void Start(){
+    public void Start() {
         final ScoreboardManager managerW = Bukkit.getScoreboardManager();
         final ScoreboardManager managerV = Bukkit.getScoreboardManager();
 
@@ -40,11 +41,9 @@ public class Game {
             Random random = new Random();
             Player WolfTeamPlayers = Players.get(random.nextInt(Players.size()));
             if (teamW.hasEntry(WolfTeamPlayers.getName())) {
-                // WolfTeamPlayers.sendMessage("貴方はすでに人狼チームに所属しているため再抽選が行われます");
                 return;
             }
             teamW.addPlayer(WolfTeamPlayers);
-            // WolfTeamPlayers.sendMessage("貴方は人狼に選ばれました");
         }
         for (Player playerALL : Bukkit.getOnlinePlayers()) {
             Minecraft_SPY_RUMBLE.PlayerCount += 1;
@@ -58,7 +57,7 @@ public class Game {
             playerALL.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "-----------------------------------------------------");
             playerALL.sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "ゲームスタート！");
             playerALL.sendMessage("");
-            playerALL.sendMessage(ChatColor.AQUA + "制限時間は" + ChatColor.RESET + ChatColor.GOLD + "3時間" + ChatColor.RESET + ChatColor.AQUA + "です");
+            playerALL.sendMessage(ChatColor.AQUA + "同時タスク出現数は" + ChatColor.RESET + ChatColor.GOLD + ParallelTaskCount + ChatColor.RESET + ChatColor.AQUA + "個です");
             playerALL.sendMessage("");
             if (teamV.hasEntry(playerALL.getName())) {
                 playerALL.sendMessage(ChatColor.DARK_AQUA + "あなたは" + ChatColor.GREEN + "村人陣営" + ChatColor.DARK_AQUA + "です");
@@ -68,6 +67,27 @@ public class Game {
                 playerALL.sendMessage(ChatColor.DARK_AQUA + "仲間は" + ChatColor.RED + teamW.getEntries() + ChatColor.DARK_AQUA + "です");
             }
             playerALL.sendMessage(ChatColor.BOLD + "" + ChatColor.DARK_GREEN + "-----------------------------------------------------");
+        }
+        for (Entity entity : Bukkit.getWorlds().get(0).getEntities()) {
+            // エンティティがアーマースタンドであり、かつ指定されたタグを持つかどうかを確認します。
+            if (entity instanceof ArmorStand && entity.getScoreboardTags().contains("TaskPoint")) {
+                ArmorStand armorStand = (ArmorStand) entity;
+                // アーマースタンドを削除します。
+                armorStand.setGlowing(false);
+            }
+        }
+        for (int i = ParallelTaskCount; i > 0; i -= 1) {
+            onArmorStand();
+        }
+    }
+
+    public void onArmorStand() {
+        World currentWorld = Bukkit.getWorlds().get(0); // 現在のワールドはリストの先頭にあると仮定
+        List<ArmorStand> armorStands = (List<ArmorStand>) currentWorld.getEntitiesByClass(ArmorStand.class);
+        ArmorStand randomArmorStand = armorStands.get(new Random().nextInt(armorStands.size()));
+        if (randomArmorStand != null && randomArmorStand.getScoreboardTags().contains("TaskPoint") && !randomArmorStand.getScoreboardTags().contains("SelectedTaskPoint")) {
+            randomArmorStand.addScoreboardTag("SelectedTaskPoint");
+            randomArmorStand.setGlowing(true);
         }
     }
 }
