@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,6 +44,8 @@ public class ItemSpawnStand implements Listener {
                         armorStand.setBasePlate(true); // 防具建てが地面に設置されないようにする
                         armorStand.setCustomName(ChatColor.GOLD + "金の出現場所の候補");
                         armorStand.addScoreboardTag("TaskPoint");
+                        armorStand.setInvulnerable(true);
+                        event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1.0f, 1.0f);
                     });
                 }
             }
@@ -51,7 +54,17 @@ public class ItemSpawnStand implements Listener {
                 ItemMeta ResetItemMeta = ResetItem.getItemMeta();
                 Objects.requireNonNull(ResetItemMeta).setDisplayName(ChatColor.AQUA + "出現場所を全てリセットする");
                 ResetItem.setItemMeta(ResetItemMeta);
-                RGUI.setItem(4, ResetItem);
+                RGUI.setItem(2, ResetItem);
+                ItemStack GlowItem = new ItemStack(Material.GLOW_INK_SAC);
+                ItemMeta GlowItemMeta = GlowItem.getItemMeta();
+                Objects.requireNonNull(GlowItemMeta).setDisplayName(ChatColor.AQUA + "スポーン場所を発光させる");
+                GlowItem.setItemMeta(GlowItemMeta);
+                RGUI.setItem(4, GlowItem);
+                ItemStack unGlowItem = new ItemStack(Material.INK_SAC);
+                ItemMeta unGlowItemMeta = unGlowItem.getItemMeta();
+                Objects.requireNonNull(unGlowItemMeta).setDisplayName(ChatColor.AQUA + "スポーン場所の発光を解除");
+                unGlowItem.setItemMeta(unGlowItemMeta);
+                RGUI.setItem(6, unGlowItem);
                 event.getPlayer().openInventory(RGUI);
                 event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 1.0f, 1.0f);
             }
@@ -66,10 +79,48 @@ public class ItemSpawnStand implements Listener {
         if (event.getWhoClicked() instanceof Player) {
             // クリックされたGUIを取得する
             Inventory clickedInventory = event.getClickedInventory();
+            // クリックしたプレイヤーを取得
+            Player player = (Player) event.getWhoClicked();
             if (clickedInventory == RGUI) {
                 ItemStack clickedItem = event.getCurrentItem();
                 if (clickedItem != null && clickedItem.getType().equals(Material.ARMOR_STAND)) {
-                    EntityType TaskSpawnStand = EntityType.ARMOR_STAND;
+                    for (Entity entity : player.getWorld().getEntities()) {
+                        // エンティティがアーマースタンドであり、かつ指定されたタグを持つかどうかを確認します。
+                        if (entity instanceof ArmorStand && entity.getScoreboardTags().contains("TaskPoint")) {
+                            ArmorStand armorStand = (ArmorStand) entity;
+                            // アーマースタンドを削除します。
+                            armorStand.remove();
+                        }
+                    }
+                    player.closeInventory();
+                    player.sendMessage(ChatColor.GOLD + "金のスポーン場所を全て削除しました");
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+                }
+                if (clickedItem != null && clickedItem.getType().equals(Material.GLOW_INK_SAC)) {
+                    for (Entity entity : player.getWorld().getEntities()) {
+                        // エンティティがアーマースタンドであり、かつ指定されたタグを持つかどうかを確認します。
+                        if (entity instanceof ArmorStand && entity.getScoreboardTags().contains("TaskPoint")) {
+                            ArmorStand armorStand = (ArmorStand) entity;
+                            // アーマースタンドを削除します。
+                            armorStand.setGlowing(true);
+                        }
+                    }
+                    player.closeInventory();
+                    player.sendMessage(ChatColor.GOLD + "金のスポーン場所を全て発光させました");
+                    player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+                }
+                if (clickedItem != null && clickedItem.getType().equals(Material.INK_SAC)) {
+                    for (Entity entity : player.getWorld().getEntities()) {
+                        // エンティティがアーマースタンドであり、かつ指定されたタグを持つかどうかを確認します。
+                        if (entity instanceof ArmorStand && entity.getScoreboardTags().contains("TaskPoint")) {
+                            ArmorStand armorStand = (ArmorStand) entity;
+                            // アーマースタンドを削除します。
+                            armorStand.setGlowing(false);
+                        }
+                    }
+                    player.closeInventory();
+                    player.sendMessage(ChatColor.GOLD + "金のスポーン場所の発光を全て解除しました");
+                    player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.1f);
                 }
                 event.setCancelled(true);
             }

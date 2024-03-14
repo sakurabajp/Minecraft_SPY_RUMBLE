@@ -23,7 +23,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Objects;
 
 public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
-
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -80,15 +79,16 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     }
 
     // BeforeWolfPlayerCountの略
-    int BWPCount = 1;
+    public static int BWPCount = 1;
     // BeforeVillagerPlayerCountの略
-    int BVPCount;
+    public static int BVPCount;
     // そもそもの全体人数
-    int PlayerCount;
+    public static int PlayerCount;
     // 同時に出現するタスクの数
-    int ParallelTaskCount = 3;
+    public static int ParallelTaskCount = 3;
     Inventory SettingGUI = Bukkit.createInventory(null, 9, ChatColor.BOLD + "設定");
     EntityType TaskSpawnStand = EntityType.ARMOR_STAND;
+
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
