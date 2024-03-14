@@ -33,14 +33,10 @@ public class Game {
         }
         Team teamW = scoreboardW.registerNewTeam("wolf");
         Team teamV = scoreboardV.registerNewTeam("villager");
-        // teamM.setSuffix("[←この人は狂人です]");
-        // teamW.setSuffix("[←この人は人狼です]");
-        // teamV.setSuffix("[←この人は村人です]");
         for (Player playerACC : Bukkit.getOnlinePlayers()) {
-            // playerACC.sendMessage("貴方を村人チームに追加しました");
             teamV.addPlayer(playerACC);
         }
-        for (int i = Minecraft_SPY_RUMBLE.BWPCount; i > 0; i += -1) {
+        for (int i = Minecraft_SPY_RUMBLE.BWPCount; i > 0; i -= 1) {
             Random random = new Random();
             Player WolfTeamPlayers = Players.get(random.nextInt(Players.size()));
             if (teamW.hasEntry(WolfTeamPlayers.getName())) {

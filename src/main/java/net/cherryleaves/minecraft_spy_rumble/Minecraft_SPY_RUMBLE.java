@@ -7,7 +7,6 @@ import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -87,7 +86,6 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     // 同時に出現するタスクの数
     public static int ParallelTaskCount = 3;
     Inventory SettingGUI = Bukkit.createInventory(null, 9, ChatColor.BOLD + "設定");
-    EntityType TaskSpawnStand = EntityType.ARMOR_STAND;
 
 
     @EventHandler
