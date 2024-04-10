@@ -3,6 +3,7 @@ package net.cherryleaves.minecraft_spy_rumble;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -89,6 +90,15 @@ public class Game {
         if (randomArmorStand != null && randomArmorStand.getScoreboardTags().contains("TaskPoint") && !randomArmorStand.getScoreboardTags().contains("SelectedTaskPoint")) {
             randomArmorStand.addScoreboardTag("SelectedTaskPoint");
             randomArmorStand.setGlowing(true);
+        }
+    }
+    public void outArmorStand(Entity e){
+        String tag = e.getScoreboardTags().toString();
+        if(e.getType().equals(EntityType.ARMOR_STAND)){
+            if(tag.equals("SelectedTaskPoint")) {
+                e.setGlowing(false);
+                e.removeScoreboardTag("SelectedTaskPoint");
+            }
         }
     }
 }
