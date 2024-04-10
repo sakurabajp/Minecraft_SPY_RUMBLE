@@ -38,7 +38,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         console.sendMessage(ChatColor.GREEN + "ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー");
         Objects.requireNonNull(getCommand("task-spawn")).setExecutor(this);
         Objects.requireNonNull(getCommand("start")).setExecutor(this);
-        Objects.requireNonNull(getCommand("stop")).setExecutor(this);
+        Objects.requireNonNull(getCommand("stop-game")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
     }
@@ -73,7 +73,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             admin.playSound(admin.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 0.8f);
             GiveBook(admin);
         }
-        if (command.getName().equalsIgnoreCase("stop")) {
+        if (command.getName().equalsIgnoreCase("stop-game")) {
             if (!(sender instanceof Player) || !sender.isOp()) {
                 sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 return true;

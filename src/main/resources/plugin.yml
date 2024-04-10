@@ -11,5 +11,5 @@ commands:
   start:
     aliases: [start-book, werewolf-start]
     description: 人狼スタート本を入手するだけです。本当にゲームをスタートさせたい場合は本を開いてね
-  stop:
+  stop-game:
     description: 人狼ストップ。すべてが消えます。
