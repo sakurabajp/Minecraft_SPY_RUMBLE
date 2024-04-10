@@ -81,6 +81,7 @@ public class Game {
         }
     }
 
+    // 過去の自分さん、このメソッドで何がしたいのかくらいメモしててくれても良かったんじゃないですかね
     public void onArmorStand() {
         World currentWorld = Bukkit.getWorlds().get(0); // 現在のワールドはリストの先頭にあると仮定
         List<ArmorStand> armorStands = (List<ArmorStand>) currentWorld.getEntitiesByClass(ArmorStand.class);

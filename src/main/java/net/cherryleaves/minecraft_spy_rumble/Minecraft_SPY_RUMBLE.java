@@ -38,6 +38,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         console.sendMessage("");
         console.sendMessage(ChatColor.GREEN + "ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー");
         Objects.requireNonNull(getCommand("task-spawn")).setExecutor(this);
+        Objects.requireNonNull(getCommand("start")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
     }
@@ -61,6 +62,17 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             admin.playSound(admin.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 0.8f);
             new ItemSpawnStand().getItem(admin);
         }
+        if (command.getName().equalsIgnoreCase("start")) {
+            if (!(sender instanceof Player) || !sender.isOp()) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
+            Player admin = ((Player) sender).getPlayer();
+            // GUiを開く
+            assert admin != null;
+            admin.playSound(admin.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 0.8f);
+            GiveBook(admin);
+        }
         return false;
     }
 
@@ -68,13 +80,17 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent Player) {
         Player.getPlayer().getInventory().clear();
         if (Player.getPlayer().isOp()) {
-            ItemStack OperateBook = new ItemStack(Material.BOOK);
-            ItemMeta OperateBookMeta = OperateBook.getItemMeta(); // metaを登録
-            Objects.requireNonNull(OperateBookMeta).setDisplayName(ChatColor.BOLD + "設定本");
-            OperateBook.setItemMeta(OperateBookMeta);
-            Player.getPlayer().getInventory().addItem(OperateBook);
-            new ItemSpawnStand().getItem(Player.getPlayer());
+            GiveBook(Player.getPlayer());
         }
+    }
+
+    public void GiveBook(Player p){
+        ItemStack OperateBook = new ItemStack(Material.BOOK);
+        ItemMeta OperateBookMeta = OperateBook.getItemMeta(); // metaを登録
+        Objects.requireNonNull(OperateBookMeta).setDisplayName(ChatColor.BOLD + "設定本");
+        OperateBook.setItemMeta(OperateBookMeta);
+        Objects.requireNonNull(p.getPlayer()).getInventory().addItem(OperateBook);
+        new ItemSpawnStand().getItem(p.getPlayer());
     }
 
     // BeforeWolfPlayerCountの略
