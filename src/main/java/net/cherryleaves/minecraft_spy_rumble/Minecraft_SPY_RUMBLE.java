@@ -90,7 +90,6 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         Objects.requireNonNull(OperateBookMeta).setDisplayName(ChatColor.BOLD + "設定本");
         OperateBook.setItemMeta(OperateBookMeta);
         Objects.requireNonNull(p.getPlayer()).getInventory().addItem(OperateBook);
-        new ItemSpawnStand().getItem(p.getPlayer());
     }
 
     // BeforeWolfPlayerCountの略
