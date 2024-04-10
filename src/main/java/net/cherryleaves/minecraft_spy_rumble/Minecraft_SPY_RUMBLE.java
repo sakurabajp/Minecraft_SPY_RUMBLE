@@ -1,12 +1,11 @@
 package net.cherryleaves.minecraft_spy_rumble;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,6 +38,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         console.sendMessage(ChatColor.GREEN + "ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー");
         Objects.requireNonNull(getCommand("task-spawn")).setExecutor(this);
         Objects.requireNonNull(getCommand("start")).setExecutor(this);
+        Objects.requireNonNull(getCommand("stop")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
     }
@@ -73,6 +73,29 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             admin.playSound(admin.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 0.8f);
             GiveBook(admin);
         }
+        if (command.getName().equalsIgnoreCase("stop")) {
+            if (!(sender instanceof Player) || !sender.isOp()) {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
+            Objects.requireNonNull(((Player) sender).getPlayer()).sendMessage("ゲームを強制中断させました");
+            ((Player) sender).getPlayer().playSound(((Player) sender).getLocation(), Sound.ITEM_GOAT_HORN_SOUND_0, 1, 1);
+            Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("wolf")).unregister();
+            Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villager")).unregister();
+            Bukkit.getServer().getWorlds().forEach(world -> {
+                world.getEntities().forEach(entity -> {
+                    if (entity instanceof ArmorStand) {
+                        ArmorStand armorStand = (ArmorStand) entity;
+                        if (armorStand.getScoreboardTags().contains("TaskPoint")) {
+                            armorStand.setGlowing(true);
+                            if (armorStand.getScoreboardTags().contains("SelectedTaskPoint")) {
+                                armorStand.removeScoreboardTag("SelectedTaskPoint");
+                            }
+                        }
+                    }
+                });
+            });
+        }
         return false;
     }
 
@@ -101,6 +124,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     // 同時に出現するタスクの数
     public static int ParallelTaskCount = 3;
     Inventory SettingGUI = Bukkit.createInventory(null, 9, ChatColor.BOLD + "設定");
+    int armorStandCount = 0;
 
 
     @EventHandler
@@ -205,8 +229,20 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                     }
                 }
                 if (clickedItem != null && clickedItem.getType().equals(Material.TOTEM_OF_UNDYING)) {
-                    player.closeInventory();
-                    new Game().Start();
+                    armorStandCount = 0;
+                    for (ArmorStand armorStand : Bukkit.getWorlds().get(0).getEntitiesByClass(ArmorStand.class)) {
+                        if (armorStand.getScoreboardTags().contains("TaskPoint")) {
+                            armorStandCount++;
+                        }
+                    }
+                    if(armorStandCount >= ParallelTaskCount) {
+                        player.closeInventory();
+                        new Game().Start();
+                    }
+                    else{
+                        player.sendMessage(ChatColor.RED + "設置してあるアーマースタンドの数を超えて設定することはできません。");
+                        player.playSound(player, Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
+                    }
                 }
                 event.setCancelled(true);
             }

@@ -87,9 +87,14 @@ public class Game {
         World currentWorld = Bukkit.getWorlds().get(0); // 現在のワールドはリストの先頭にあると仮定
         List<ArmorStand> armorStands = (List<ArmorStand>) currentWorld.getEntitiesByClass(ArmorStand.class);
         ArmorStand randomArmorStand = armorStands.get(new Random().nextInt(armorStands.size()));
-        if (randomArmorStand != null && randomArmorStand.getScoreboardTags().contains("TaskPoint") && !randomArmorStand.getScoreboardTags().contains("SelectedTaskPoint")) {
-            randomArmorStand.addScoreboardTag("SelectedTaskPoint");
-            randomArmorStand.setGlowing(true);
+        if (randomArmorStand != null && randomArmorStand.getScoreboardTags().contains("TaskPoint")) {
+            if(!randomArmorStand.getScoreboardTags().contains("SelectedTaskPoint")) {
+                randomArmorStand.addScoreboardTag("SelectedTaskPoint");
+                randomArmorStand.setGlowing(true);
+            }
+            else{
+                onArmorStand();
+            }
         }
     }
     public void outArmorStand(Entity e){
