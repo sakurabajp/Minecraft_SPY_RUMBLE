@@ -17,10 +17,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
 public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
+    public BukkitRunnable task;
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -48,6 +50,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
         super.onDisable();
+        task.cancel();
     }
 
     @Override
@@ -105,6 +108,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         Player.getPlayer().getInventory().clear();
         if (Player.getPlayer().isOp()) {
             GiveBook(Player.getPlayer());
+            new ItemSpawnStand().getItem(Player.getPlayer());
         }
     }
 
@@ -248,5 +252,19 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    public void PlayerSneak() {
+        task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (player.isSneaking()) {
+                        // ゲーム開始時にスコアボード再作成してここで、任意のプレイヤースニーク時に減らす
+                        Objects.requireNonNull(player.getScoreboard().getObjective("scoreboardA")).getScore(player.getPlayer()).setScore(-1);
+                    }
+                }
+            }
+        };task.runTaskTimer(this, 0L, 1L);
     }
 }

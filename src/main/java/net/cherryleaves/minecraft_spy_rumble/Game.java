@@ -7,9 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +20,14 @@ public class Game {
     public void Start() {
         final ScoreboardManager managerW = Bukkit.getScoreboardManager();
         final ScoreboardManager managerV = Bukkit.getScoreboardManager();
+        final ScoreboardManager managerA = Bukkit.getScoreboardManager();
 
         final Scoreboard scoreboardW = Objects.requireNonNull(managerW).getMainScoreboard();
         final Scoreboard scoreboardV = Objects.requireNonNull(managerV).getMainScoreboard();
+        final Scoreboard scoreboardA = Objects.requireNonNull(managerA).getMainScoreboard();
+
+        Objective sbA = scoreboardA.registerNewObjective("scoreboardA", "dummy", ChatColor.GREEN + "スニーク残り必要時間");
+        sbA.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
         List<Player> Players = new ArrayList<>(Bukkit.getOnlinePlayers());
         if (scoreboardW.getTeam("wolf") != null) {
@@ -80,6 +83,7 @@ public class Game {
         for (int i = ParallelTaskCount; i > 0; i -= 1) {
             onArmorStand();
         }
+        new Minecraft_SPY_RUMBLE().PlayerSneak();
     }
 
     // 過去の自分さん、このメソッドで何がしたいのかくらいメモしててくれても良かったんじゃないですかね
