@@ -17,10 +17,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
 public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
+    public BukkitRunnable task;
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -248,5 +250,17 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+    public void PlayerSneak() {
+        task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (player.isSneaking()) {
+                        // スニーク中のプレイヤーに対する処理をここに記述する
+                    }
+                }
+            }
+        };task.runTaskTimer(this, 0L, 1L);
     }
 }
