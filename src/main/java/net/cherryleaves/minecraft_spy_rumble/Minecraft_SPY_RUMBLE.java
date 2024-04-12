@@ -41,6 +41,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("stop-game")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
+        getServer().getPluginManager().registerEvents(new Player_Task(), this);
     }
 
     @Override
