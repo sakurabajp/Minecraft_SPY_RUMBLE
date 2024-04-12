@@ -17,10 +17,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
 public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
+    public BukkitRunnable task;
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -48,6 +50,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
         super.onDisable();
+        task.cancel();
     }
 
     @Override
@@ -105,6 +108,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         Player.getPlayer().getInventory().clear();
         if (Player.getPlayer().isOp()) {
             GiveBook(Player.getPlayer());
+            new ItemSpawnStand().getItem(Player.getPlayer());
         }
     }
 
@@ -248,5 +252,20 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    public void PlayerSneak() {
+        task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (player.isSneaking()) {
+                        // スニーク中のプレイヤーに対する処理をここに記述する
+                        // この例では、スニーク中のプレイヤーにメッセージを送信する
+                        player.sendMessage("You are sneaking!");
+                    }
+                }
+            }
+        };task.runTaskTimer(this, 0L, 1L);
     }
 }

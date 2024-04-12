@@ -22,9 +22,11 @@ public class Game {
     public void Start() {
         final ScoreboardManager managerW = Bukkit.getScoreboardManager();
         final ScoreboardManager managerV = Bukkit.getScoreboardManager();
+        final ScoreboardManager managerA = Bukkit.getScoreboardManager();
 
         final Scoreboard scoreboardW = Objects.requireNonNull(managerW).getMainScoreboard();
         final Scoreboard scoreboardV = Objects.requireNonNull(managerV).getMainScoreboard();
+        final Scoreboard scoreboardA = Objects.requireNonNull(managerV).getMainScoreboard();
 
         List<Player> Players = new ArrayList<>(Bukkit.getOnlinePlayers());
         if (scoreboardW.getTeam("wolf") != null) {
@@ -80,6 +82,7 @@ public class Game {
         for (int i = ParallelTaskCount; i > 0; i -= 1) {
             onArmorStand();
         }
+        new Minecraft_SPY_RUMBLE().PlayerSneak();
     }
 
     // 過去の自分さん、このメソッドで何がしたいのかくらいメモしててくれても良かったんじゃないですかね
