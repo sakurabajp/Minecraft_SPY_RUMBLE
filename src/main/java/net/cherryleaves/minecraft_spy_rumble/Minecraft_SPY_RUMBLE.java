@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -144,46 +145,38 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
     public void SettingGUICreate() {
         // 人狼の数減らし
         ItemStack WolfCountDownItem = new ItemStack(Material.BLUE_CANDLE);
-        ItemMeta WolfCountDownItemMeta = WolfCountDownItem.getItemMeta();
-        Objects.requireNonNull(WolfCountDownItemMeta).setDisplayName(ChatColor.BLUE + "人狼の数を減らす");
-        WolfCountDownItem.setItemMeta(WolfCountDownItemMeta);
+        CreateInventory(WolfCountDownItem, ChatColor.BLUE + "人狼の数を減らす");
         SettingGUI.setItem(0, WolfCountDownItem);
         // 人狼の数表示
         ItemStack WolfPlayerCountItem = new ItemStack(Material.WITHER_SKELETON_SKULL);
-        ItemMeta WolfPlayerCountItemMeta = WolfPlayerCountItem.getItemMeta();
-        Objects.requireNonNull(WolfPlayerCountItemMeta).setDisplayName(ChatColor.DARK_AQUA + "人狼の数は" + ChatColor.GOLD + BWPCount + ChatColor.DARK_AQUA + "人です");
-        WolfPlayerCountItem.setItemMeta(WolfPlayerCountItemMeta);
+        CreateInventory(WolfPlayerCountItem, ChatColor.DARK_AQUA + "人狼の数は" + ChatColor.GOLD + BWPCount + ChatColor.DARK_AQUA + "人です");
         SettingGUI.setItem(1, WolfPlayerCountItem);
         // 人狼の数増やし
         ItemStack WolfCountUpItem = new ItemStack(Material.RED_CANDLE);
-        ItemMeta WolfCountUpItemMeta = WolfCountUpItem.getItemMeta();
-        Objects.requireNonNull(WolfCountUpItemMeta).setDisplayName(ChatColor.RED + "人狼の数を増やす");
-        WolfCountUpItem.setItemMeta(WolfCountUpItemMeta);
+        CreateInventory(WolfCountUpItem, ChatColor.RED + "人狼の数を増やす");
         SettingGUI.setItem(2, WolfCountUpItem);
         // タスクの数減らし
         ItemStack TaskCountDownItem = new ItemStack(Material.LIGHT_BLUE_CANDLE);
-        ItemMeta TaskCountDownItemMeta = TaskCountDownItem.getItemMeta();
-        Objects.requireNonNull(TaskCountDownItemMeta).setDisplayName(ChatColor.RED + "同時に出現するタスクの数を減らす");
-        TaskCountDownItem.setItemMeta(TaskCountDownItemMeta);
+        CreateInventory(TaskCountDownItem, ChatColor.RED + "同時に出現するタスクの数を減らす");
         SettingGUI.setItem(4, TaskCountDownItem);
         // タスクの数表示
         ItemStack TaskCountItem = new ItemStack(Material.IRON_PICKAXE);
-        ItemMeta TaskCountItemMeta = TaskCountItem.getItemMeta();
-        Objects.requireNonNull(TaskCountItemMeta).setDisplayName(ChatColor.DARK_AQUA + "同時に出現するタスクの数は" + ChatColor.GOLD + ParallelTaskCount + ChatColor.DARK_AQUA + "個です");
-        TaskCountItem.setItemMeta(TaskCountItemMeta);
+        CreateInventory(TaskCountItem, ChatColor.DARK_AQUA + "同時に出現するタスクの数は" + ChatColor.GOLD + ParallelTaskCount + ChatColor.DARK_AQUA + "個です");
         SettingGUI.setItem(5, TaskCountItem);
         // タスクの数増やし
         ItemStack TaskCountUpItem = new ItemStack(Material.MAGENTA_CANDLE);
-        ItemMeta TaskCountUpItemMeta = TaskCountUpItem.getItemMeta();
-        Objects.requireNonNull(TaskCountUpItemMeta).setDisplayName(ChatColor.RED + "同時に出現するタスクの数を増やす");
-        TaskCountUpItem.setItemMeta(TaskCountUpItemMeta);
+        CreateInventory(TaskCountUpItem, ChatColor.RED + "同時に出現するタスクの数を増やす");
         SettingGUI.setItem(6, TaskCountUpItem);
         // ゲームスタートボタン
         ItemStack GameStartItem = new ItemStack(Material.TOTEM_OF_UNDYING);
-        ItemMeta GameStartItemMeta = GameStartItem.getItemMeta();
-        Objects.requireNonNull(GameStartItemMeta).setDisplayName(ChatColor.BLUE + "ゲームスタート！");
-        GameStartItem.setItemMeta(GameStartItemMeta);
+        CreateInventory(GameStartItem, ChatColor.BLUE + "ゲームスタート！");
         SettingGUI.setItem(8, GameStartItem);
+    }
+
+    private void CreateInventory(ItemStack Item, String Title){
+        ItemMeta ItemMeta = Item.getItemMeta();
+        Objects.requireNonNull(ItemMeta).setDisplayName(Title);
+        Item.setItemMeta(ItemMeta);
     }
 
     @EventHandler

@@ -20,14 +20,9 @@ public class Game {
     public void Start() {
         final ScoreboardManager managerW = Bukkit.getScoreboardManager();
         final ScoreboardManager managerV = Bukkit.getScoreboardManager();
-        final ScoreboardManager managerA = Bukkit.getScoreboardManager();
 
         final Scoreboard scoreboardW = Objects.requireNonNull(managerW).getMainScoreboard();
         final Scoreboard scoreboardV = Objects.requireNonNull(managerV).getMainScoreboard();
-        final Scoreboard scoreboardA = Objects.requireNonNull(managerA).getMainScoreboard();
-
-        Objective sbA = scoreboardA.registerNewObjective("scoreboardA", "dummy", ChatColor.GREEN + "スニーク残り必要時間");
-        sbA.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
         List<Player> Players = new ArrayList<>(Bukkit.getOnlinePlayers());
         if (scoreboardW.getTeam("wolf") != null) {
