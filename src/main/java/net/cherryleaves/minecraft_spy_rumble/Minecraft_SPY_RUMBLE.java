@@ -234,12 +234,12 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                             armorStandCount++;
                         }
                     }
-                    if(armorStandCount >= ParallelTaskCount) {
+                    if(armorStandCount - 1 >= ParallelTaskCount) {
                         player.closeInventory();
                         new Game().Start();
                     }
                     else{
-                        player.sendMessage(ChatColor.RED + "設置してあるアーマースタンドの数を超えて設定することはできません。");
+                        player.sendMessage(ChatColor.RED + "設置してあるアーマースタンドの数+1を超えて設定することはできません。");
                         player.playSound(player, Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
                     }
                 }
@@ -280,10 +280,24 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                         Score score = scoreboard.getScore(p.getName());
                         if(score.getScore() <= 0){
                             score.setScore(100);
-                            p.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "本来ここで金を渡したい");
+                            for (Entity nearbyEntity : p.getNearbyEntities(0, 0, 0)) {
+                                if (nearbyEntity instanceof ArmorStand && nearbyEntity.getScoreboardTags().contains("SelectedTaskPoint")) {
+                                    new Game().outArmorStand(nearbyEntity);
+                                }
+                            }
+                            new Game().onArmorStand();
+                            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.1f);
+                            p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT));
                         }
                         else{
-                            score.setScore(score.getScore() - 1);
+                            for (Entity nearbyEntity : p.getNearbyEntities(0, 0, 0)) {
+                                if (nearbyEntity instanceof ArmorStand && nearbyEntity.getScoreboardTags().contains("SelectedTaskPoint")) {
+                                        score.setScore(score.getScore() - 1);
+                                    }
+                                else {
+                                    score.setScore(100);
+                                }
+                            }
                         }
                     }
                 }

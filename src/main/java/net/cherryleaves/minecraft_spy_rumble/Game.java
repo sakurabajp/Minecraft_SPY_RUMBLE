@@ -46,7 +46,7 @@ public class Game {
         }
         for (Player playerALL : Bukkit.getOnlinePlayers()) {
             Minecraft_SPY_RUMBLE.PlayerCount += 1;
-            playerALL.setGameMode(GameMode.SURVIVAL);
+            playerALL.setGameMode(GameMode.ADVENTURE);
             playerALL.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 10, 80, true, false));
             playerALL.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 10, 80, true, false));
             playerALL.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 5, true, false));
@@ -111,9 +111,8 @@ public class Game {
         }
     }
     public void outArmorStand(Entity e){
-        String tag = e.getScoreboardTags().toString();
         if(e.getType().equals(EntityType.ARMOR_STAND)){
-            if(tag.equals("SelectedTaskPoint")) {
+            if(e.getScoreboardTags().contains("SelectedTaskPoint")) {
                 e.setGlowing(false);
                 e.removeScoreboardTag("SelectedTaskPoint");
             }
