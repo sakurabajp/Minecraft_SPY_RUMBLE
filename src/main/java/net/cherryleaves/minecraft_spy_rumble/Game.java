@@ -78,7 +78,21 @@ public class Game {
         for (int i = ParallelTaskCount; i > 0; i -= 1) {
             onArmorStand();
         }
-        new Minecraft_SPY_RUMBLE().PlayerSneak();
+        SneakScoreBoard();
+    }
+
+    public void SneakScoreBoard(){
+        ScoreboardManager managerA = Bukkit.getScoreboardManager();
+        Scoreboard scoreboardA = Objects.requireNonNull(managerA).getMainScoreboard();
+        if (scoreboardA.getObjective("PlayerSneakTime") != null) {
+            Objects.requireNonNull(scoreboardA.getObjective("PlayerSneakTime")).unregister();
+        }
+        Objective SneakScoreA = scoreboardA.registerNewObjective("PlayerSneakTime", "dummy", "PlayerSneakTime");
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            SneakScoreA.getScore(player).setScore(100);
+        }
+        SneakScoreA.setDisplayName("テスト(スニークイベント)");
+        SneakScoreA.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
 
     // 過去の自分さん、このメソッドで何がしたいのかくらいメモしててくれても良かったんじゃないですかね

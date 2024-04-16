@@ -14,11 +14,15 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Objects;
 
@@ -44,7 +48,6 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("stop-game")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
-        getServer().getPluginManager().registerEvents(new Player_Task(), this);
     }
 
     @Override
@@ -249,11 +252,60 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    // Score score = Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getObjective("PlayerSneakTime")).getScore(player);
                     if (player.isSneaking()) {
                         // スニーク中のプレイヤーに対する処理をここに記述する
+                        // score.setScore(score.getScore() - 1);
+                        player.sendMessage("a");
+                    }
+                    else{
+                        // score.setScore(150);
                     }
                 }
             }
         };task.runTaskTimer(this, 0L, 1L);
+    }
+    public BukkitRunnable TimerM;
+
+    @EventHandler
+    public void PlayerShiftEvent(PlayerToggleSneakEvent e) {
+        Player p = e.getPlayer();
+        if (!p.isSneaking()) {
+            p.sendMessage(ChatColor.AQUA + "すにーくいべんとえなぶる！");
+            Objective scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getObjective("PlayerSneakTime");
+            TimerM = new BukkitRunnable() {
+                @Override
+                public void run(){
+                    if(scoreboard != null){
+                        Score score = scoreboard.getScore(p.getName());
+                        if(score.getScore() <= 0){
+                            score.setScore(100);
+                            p.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "本来ここで金を渡したい");
+                        }
+                        else{
+                            score.setScore(score.getScore() - 1);
+                        }
+                    }
+                }
+            };
+            TimerM.runTaskTimer(this, 0L, 1L);
+            // スニーク中に1tick事に数値を減らしてタスク進捗を管理。これ自体は別メゾットに置いたほうがいいかも。
+        }
+            /*for (Entity entity : p.getNearbyEntities(2, 2, 2)) {
+                if (entity instanceof ArmorStand) {
+                    Location armorStandLocation = entity.getLocation();
+                    if (p.getLocation().distanceSquared(armorStandLocation) <= 2 * 2 ){
+                    }
+                }
+            }*/
+        else if(p.isSneaking()){
+            p.sendMessage(ChatColor.RED + "すにーくいべんとでぃさぶる！");
+            Objective scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getObjective("PlayerSneakTime");
+            if(TimerM != null){
+                TimerM.cancel();
+                Score score = Objects.requireNonNull(scoreboard).getScore(p.getName());
+                score.setScore(100);
+            }
+        }
     }
 }
