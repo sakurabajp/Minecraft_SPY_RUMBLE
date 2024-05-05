@@ -6,11 +6,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -22,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Objects;
 
@@ -55,8 +56,6 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         super.onDisable();
     }
 
-    int TaskTime = 100;
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("task-spawn")) {
@@ -88,8 +87,12 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             }
             Objects.requireNonNull(((Player) sender).getPlayer()).sendMessage("ゲームを強制中断させました");
             ((Player) sender).getPlayer().playSound(((Player) sender).getLocation(), Sound.ITEM_GOAT_HORN_SOUND_0, 1, 1);
-            Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("wolf")).unregister();
-            Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villager")).unregister();
+            if(Objects.equals(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("wolf"), null)){
+                Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("wolf")).unregister();
+            }
+            if(Objects.equals(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("villager"), null)) {
+                Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getTeam("villager")).unregister();
+            }
             Bukkit.getServer().getWorlds().forEach(world -> {
                 world.getEntities().forEach(entity -> {
                     if (entity instanceof ArmorStand) {
@@ -99,6 +102,9 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                             if (armorStand.getScoreboardTags().contains("SelectedTaskPoint")) {
                                 armorStand.removeScoreboardTag("SelectedTaskPoint");
                             }
+                        }
+                        else{
+                            sender.sendMessage("すでにゲームは終了しています");
                         }
                     }
                 });
@@ -248,6 +254,24 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             }
         }
     }
+    public void PlayerSneak() {
+        task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    // Score score = Objects.requireNonNull(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getObjective("PlayerSneakTime")).getScore(player);
+                    if (player.isSneaking()) {
+                        // スニーク中のプレイヤーに対する処理をここに記述する
+                        // score.setScore(score.getScore() - 1);
+                        player.sendMessage("a");
+                    }
+                    else{
+                        // score.setScore(150);
+                    }
+                }
+            }
+        };task.runTaskTimer(this, 0L, 1L);
+    }
     public BukkitRunnable TimerM;
 
     @EventHandler
@@ -262,23 +286,26 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                     if(scoreboard != null){
                         Score score = scoreboard.getScore(p.getName());
                         if(score.getScore() <= 0){
-                            score.setScore(TaskTime);
+                            score.setScore(100);
                             for (Entity nearbyEntity : p.getNearbyEntities(0, 0, 0)) {
                                 if (nearbyEntity instanceof ArmorStand && nearbyEntity.getScoreboardTags().contains("SelectedTaskPoint")) {
                                     new Game().outArmorStand(nearbyEntity);
                                 }
                             }
                             new Game().onArmorStand();
-                            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.1f);
+                            p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1f);
                             p.getInventory().addItem(new ItemStack(Material.GOLD_INGOT));
                         }
                         else{
                             for (Entity nearbyEntity : p.getNearbyEntities(0, 0, 0)) {
                                 if (nearbyEntity instanceof ArmorStand && nearbyEntity.getScoreboardTags().contains("SelectedTaskPoint")) {
-                                        score.setScore(score.getScore() - 1);
+                                    score.setScore(score.getScore() - 1);
+                                    if(score.getScore() % 20 == 19) {
+                                        p.playSound(p.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 0.1f);
                                     }
+                                }
                                 else {
-                                    score.setScore(TaskTime);
+                                    score.setScore(100);
                                 }
                             }
                         }
@@ -286,7 +313,6 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                 }
             };
             TimerM.runTaskTimer(this, 0L, 1L);
-            // スニーク中に1tick事に数値を減らしてタスク進捗を管理。これ自体は別メゾットに置いたほうがいいかも。
         }
         else if(p.isSneaking()){
             p.sendMessage(ChatColor.RED + "すにーくいべんとでぃさぶる！");
@@ -294,24 +320,8 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             if(TimerM != null){
                 TimerM.cancel();
                 Score score = Objects.requireNonNull(scoreboard).getScore(p.getName());
-                score.setScore(TaskTime);
+                score.setScore(100);
             }
-        }
-    }
-
-    // 帰ってからダメージデバッグ必須
-    @EventHandler
-    public void PlayerDamage(EntityDamageByEntityEvent event){
-        Entity en = event.getEntity();
-        Player p = (Player) event.getDamager();
-        if(p.getInventory().getItemInMainHand().equals(new ItemStack(Material.AIR))){
-            event.setCancelled(true);
-            Objective scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getObjective("PlayerSneakTime");
-            Score score = Objects.requireNonNull(scoreboard).getScore(p.getName());
-            score.setScore(TaskTime);
-        }
-        if(p.getInventory().getItemInMainHand().equals(/*ここにショップアイテムとかを置く*/new ItemStack(Material.IRON_PICKAXE))){
-            // ここに殴られたときの処理
         }
     }
 }

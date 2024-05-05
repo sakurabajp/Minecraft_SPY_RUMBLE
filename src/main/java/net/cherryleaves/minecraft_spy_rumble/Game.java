@@ -18,6 +18,19 @@ import static net.cherryleaves.minecraft_spy_rumble.Minecraft_SPY_RUMBLE.Paralle
 
 public class Game {
     public void Start() {
+        Bukkit.getServer().getWorlds().forEach(world -> {
+            world.getEntities().forEach(entity -> {
+                if (entity instanceof ArmorStand) {
+                    ArmorStand armorStand = (ArmorStand) entity;
+                    if (armorStand.getScoreboardTags().contains("TaskPoint")) {
+                        armorStand.setGlowing(true);
+                        if (armorStand.getScoreboardTags().contains("SelectedTaskPoint")) {
+                            armorStand.removeScoreboardTag("SelectedTaskPoint");
+                        }
+                    }
+                }
+            });
+        });
         final ScoreboardManager managerW = Bukkit.getScoreboardManager();
         final ScoreboardManager managerV = Bukkit.getScoreboardManager();
 
