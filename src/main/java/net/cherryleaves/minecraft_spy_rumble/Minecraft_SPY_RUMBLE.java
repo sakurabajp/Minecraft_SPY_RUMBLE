@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -55,6 +56,8 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         // Plugin shutdown logic
         super.onDisable();
     }
+
+    int TaskTime = 100;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -286,7 +289,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                     if(scoreboard != null){
                         Score score = scoreboard.getScore(p.getName());
                         if(score.getScore() <= 0){
-                            score.setScore(100);
+                            score.setScore(TaskTime);
                             for (Entity nearbyEntity : p.getNearbyEntities(0, 0, 0)) {
                                 if (nearbyEntity instanceof ArmorStand && nearbyEntity.getScoreboardTags().contains("SelectedTaskPoint")) {
                                     new Game().outArmorStand(nearbyEntity);
@@ -305,7 +308,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
                                     }
                                 }
                                 else {
-                                    score.setScore(100);
+                                    score.setScore(TaskTime);
                                 }
                             }
                         }
@@ -320,8 +323,24 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
             if(TimerM != null){
                 TimerM.cancel();
                 Score score = Objects.requireNonNull(scoreboard).getScore(p.getName());
-                score.setScore(100);
+                score.setScore(TaskTime);
             }
+        }
+    }
+
+    // 帰ってからダメージデバッグ必須
+    @EventHandler
+    public void PlayerDamage(EntityDamageByEntityEvent event){
+        Entity en = event.getEntity();
+        Player p = (Player) event.getDamager();
+        if(p.getInventory().getItemInMainHand().equals(new ItemStack(Material.AIR))){
+            event.setCancelled(true);
+            Objective scoreboard = Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard().getObjective("PlayerSneakTime");
+            Score score = Objects.requireNonNull(scoreboard).getScore(p.getName());
+            score.setScore(TaskTime);
+        }
+        if(p.getInventory().getItemInMainHand().equals(/*ここにショップアイテムとかを置く*/new ItemStack(Material.IRON_PICKAXE))){
+            // ここに殴られたときの処理
         }
     }
 }
