@@ -13,3 +13,6 @@ commands:
     description: 人狼スタート本を入手するだけです。本当にゲームをスタートさせたい場合は本を開いてね
   stop-game:
     description: 人狼ストップ。すべてが消えます。
+  goal:
+    aliases: [set-goal]
+    description: ゴールの設置

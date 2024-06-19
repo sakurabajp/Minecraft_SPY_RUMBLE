@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,7 +22,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Objects;
 
@@ -47,6 +45,7 @@ public final class Minecraft_SPY_RUMBLE extends JavaPlugin implements Listener {
         Objects.requireNonNull(getCommand("task-spawn")).setExecutor(this);
         Objects.requireNonNull(getCommand("start")).setExecutor(this);
         Objects.requireNonNull(getCommand("stop-game")).setExecutor(this);
+        Objects.requireNonNull(getCommand("goal")).setExecutor(this);
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new ItemSpawnStand(), this);
     }
